@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Rutas - Mapa de Nodos</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Deshabilitar clic derecho
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault(); // Prevenir el menú contextual
+        });
+
+        // Deshabilitar teclas F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
+        document.onkeydown = function(event) {
+            if (event.keyCode === 123) { // F12
+                return false;
+            } else if ((event.ctrlKey && event.shiftKey && event.keyCode === 73) || // Ctrl+Shift+I
+                       (event.ctrlKey && event.shiftKey && event.keyCode === 74) || // Ctrl+Shift+J
+                       (event.ctrlKey && event.keyCode === 85) || // Ctrl+U
+                       (event.ctrlKey && event.shiftKey && event.keyCode === 67)) { // Ctrl+Shift+C
+                return false;
+            }
+        };
+
+
+    </script>
+</head>
+<body>
+    <h1>Calculadora de Rutas con Algoritmos</h1>
+    <div class="container">
+        <div class="input-container">
+            <div class="menu">
+                <label for="fromNode">Nodo de Inicio:</label>
+                <select id="fromNode">
+                    <option value="Lima">Lima</option>
+                    <option value="Ica">Ica</option>
+                    <option value="Cuzco">Cuzco</option>
+                    <option value="Juliaca">Juliaca</option>
+                    <option value="Nazca">Nazca</option>
+                    <option value="Arequipa">Arequipa</option>
+                    <option value="Moquegua">Moquegua</option>
+                    <option value="Puno">Puno</option>
+                    <option value="Tacna">Tacna</option>
+                </select>
+
+                <label for="toNode">Nodo Destino:</label>
+                <select id="toNode">
+                    <option value="Lima">Lima</option>
+                    <option value="Ica">Ica</option>
+                    <option value="Cuzco">Cuzco</option>
+                    <option value="Juliaca">Juliaca</option>
+                    <option value="Nazca">Nazca</option>
+                    <option value="Arequipa">Arequipa</option>
+                    <option value="Moquegua">Moquegua</option>
+                    <option value="Puno">Puno</option>
+                    <option value="Tacna">Tacna</option>
+                </select>
+
+
+                <select id="algorithm" onchange="calculateRoute()">
+                    <option value="">Seleciona Un Algoritmo</option>
+                    <option value="greedy-cost">Ruta Avara (Costo)</option>
+                    <option value="greedy-distance">Ruta Avara (Distancia)</option>
+                    <option value="greedy-time">Ruta Avara (Tiempo)</option>
+                    <option value="a-star">Algoritmo A*</option>
+                    <option value="dijkstra">Algoritmo Dijkstra</option>
+                </select>
+                <button id="resetGraph" onclick="resetGraph()">Restablecer Gráfico</button>
+                <button onclick="calculateRoute()">Calcular</button>
+
+            </div>
+            <div id="comparisonTableContainer" style="display: none;">
+                <h3>Comparativa de Evaluación de Nodos</h3>
+                <table id="comparisonTable" border="1" style="width: 100%; text-align: center;">
+                    <thead>
+                        <tr>
+                            <th>Nodo Actual</th>
+                            <th>Vecino Evaluado</th>
+                            <th>Valor Métrico</th>
+                            <th>Razón de Descarte</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filas generadas dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            
+                        <!-- Resultado de la ruta calculada -->
+                        <div id="result">
+                            <h3>Resultado de la Ruta:</h3>
+                            <p id="routeOutput"></p>
+                        </div>
+        </div>
+
+
+            <!-- Área para mostrar el gráfico -->
+            <div id="graph" class="graph-container"></div>
+
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
