@@ -5,25 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Rutas - Mapa de Nodos</title>
     <link rel="stylesheet" href="style.css">
-    <script>
-        // Deshabilitar clic derecho
-        document.addEventListener('contextmenu', function(event) {
-            event.preventDefault(); // Prevenir el menú contextual
-        });
-
-        // Deshabilitar teclas F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
-        document.onkeydown = function(event) {
-            if (event.keyCode === 123) { // F12
-                return false;
-            } else if ((event.ctrlKey && event.shiftKey && event.keyCode === 73) || // Ctrl+Shift+I
-                       (event.ctrlKey && event.shiftKey && event.keyCode === 74) || // Ctrl+Shift+J
-                       (event.ctrlKey && event.keyCode === 85) || // Ctrl+U
-                       (event.ctrlKey && event.shiftKey && event.keyCode === 67)) { // Ctrl+Shift+C
+<script>
+        // Bloquear tecla F12 y otras herramientas de desarrollo
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key === 'F12' || // Bloqueo de F12
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || // Ctrl + Shift + I
+                (e.ctrlKey && e.shiftKey && e.key === 'J') || // Ctrl + Shift + J
+                (e.ctrlKey && e.key === 'U') // Ctrl + U
+            ) {
+                e.preventDefault();
+                alert("Esta acción está deshabilitada.");
                 return false;
             }
-        };
+        });
 
+        // Bloquear clic derecho
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert("Clic derecho deshabilitado.");
+        });
 
+        // Detectar si se abren herramientas de desarrollo
+        (function() {
+            const devtools = {
+                open: false,
+                orientation: undefined
+            };
+
+            const threshold = 160;
+
+            const emitEvent = (state) => {
+                window.dispatchEvent(new CustomEvent('devtoolschange', {
+                    detail: {
+                        open: state.open,
+                        orientation: state.orientation
+                    }
+                }));
+            };
+
+            const main = ({ emitEvent, devtools, threshold }) => {
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                const orientation = widthThreshold ? 'vertical' : 'horizontal';
+
+                if (
+                    !(heightThreshold && widthThreshold) &&
+                    ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) ||
+                        widthThreshold || heightThreshold)
+                ) {
+                    if (!devtools.open || devtools.orientation !== orientation) {
+                        emitEvent({
+                            open: true,
+                            orientation
+                        });
+                    }
+                    devtools.open = true;
+                    devtools.orientation = orientation;
+                } else {
+                    if (devtools.open) {
+                        emitEvent({
+                            open: false,
+                            orientation: undefined
+                        });
+                    }
+                    devtools.open = false;
+                    devtools.orientation = undefined;
+                }
+            };
+
+            setInterval(() => main({ emitEvent, devtools, threshold }), 500);
+
+            window.addEventListener('devtoolschange', (e) => {
+                if (e.detail.open) {
+                    alert("Las herramientas de desarrollo están abiertas. Por favor, ciérrelas.");
+                }
+            });
+        })();
     </script>
 </head>
 <body>
